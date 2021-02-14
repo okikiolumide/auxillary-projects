@@ -1,0 +1,36 @@
+#!/bin/bash
+#Author: Okiki Olumide
+#Date: 13th Feb 2021
+
+users="/home/ubuntu/shell/names.csv"
+publickey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCvCu9vHrQJSbqRfi/bAtDMdTh35uLNoH//LpzcWdSrniOm3MkHwZHdr3xbYe+gpvXG8Nv/FXN07is7qVujPukrJmHjGGMAKWVZfDg+qXnU156ZJQ1ZKePAZVf9a+5sL4dXiIxp4M/s+S4A6lGFyLC1PipI/Mzph8rmd0c6YvumebWEGvVuJcMLO4TPatRCx1rcdSdQ0TMOWt15E3KEYXYaPcyudqviAmOLzReGBQSNHeKcEX57GLm+hW2diy5Yf8WP5jFSI71Gl+VBsLqPbihFLTqDpWstD9DmeUOpX3PLUVMYoddKaUQH1WK0NQGYA5qPJ3zzP5o/wJDGffvUlw7U4k726ZTapsWZWO2CWSwCrWqJgayXRSQda9WCSy2HmJblyOf+6e1Jj9txUdTYMblpyYBeOK7ULn/mdQT8EqN9oXH/wZpeAkVlpnU+vysPMeJ/FZ+n/Ue7SvryzXhR9rnZ90QPnslhzlH7ngQHqj21FX+XpG01YnSPn46Cvl8JS+8= imported-openssh-key"
+
+
+for name in $(cat $users)
+        do
+
+        #Checks if User already exists in /etc/passwd
+        if getent passwd | grep $name
+
+        then
+                #prints User already exist
+                echo " $name already exist on this server"
+                exitcode=1
+
+        else
+                #Create new user with Home Directory and add each user to Developers Group
+                  useradd  -m $name  -G developers
+
+                #.ssh directory is created by default in User Home Directory
+                mkdir /home/$name/.ssh
+
+                #create Authorized keys file
+                  touch /home/$name/.ssh/authorized_keys
+
+                 #Write publick key to Authorized keys file
+                  echo $publickey > /home/$name/.ssh/authorized_keys
+
+                 echo "$name successfully added"
+         fi
+
+         done
